@@ -19,16 +19,18 @@ public class Book {
     private String isbn;
     private Integer stock;
     private String cover;
+    private int status; // 0: normal, 1: deleted
 
     public Book() {
     }
 
-    public Book(String title, String author, double price, String isbn, Integer stock, String cover) {
+    public Book(String title, String author, double price, String isbn, Integer stock, String cover, int status) {
         this.title = title;
         this.author = author;
         this.price = price;
         this.isbn = isbn;
         this.stock = stock;
         this.cover = cover;
+        this.status = status;
     }
 }

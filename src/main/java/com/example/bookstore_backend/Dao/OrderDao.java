@@ -10,10 +10,16 @@ import java.util.List;
 
 @Repository
 public interface OrderDao {
-    List<Order> findAllByUser(@Param("user") User user);
+    List<Order> findFilteredOrders(@Param("user") User user,@Param("keyword")String keyword,@Param("startDate") String startDate,@Param("endDate") String endDate);
+
     List<OrderItem> getItemsByOrder(@Param("order" ) Order order);
+    List<OrderItem> findAllOrderItems();
+    List<OrderItem> findAllOrderItemsByUser(@Param("user") User user);
 
     Order saveOrder(@Param("order") Order order);
 
     void saveOrderItem(@Param("orderItem") OrderItem orderItem);
+
+
+
 }

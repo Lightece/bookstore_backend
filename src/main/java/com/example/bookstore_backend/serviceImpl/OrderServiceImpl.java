@@ -3,10 +3,6 @@ package com.example.bookstore_backend.serviceImpl;
 import com.example.bookstore_backend.Dao.CartDao;
 import com.example.bookstore_backend.Dao.OrderDao;
 import com.example.bookstore_backend.Dao.UserDao;
-import com.example.bookstore_backend.Repository.CartRepository;
-import com.example.bookstore_backend.Repository.OrderItemRepository;
-import com.example.bookstore_backend.Repository.OrderRepository;
-import com.example.bookstore_backend.Repository.UserRepository;
 import com.example.bookstore_backend.entity.Order;
 import com.example.bookstore_backend.entity.User;
 import com.example.bookstore_backend.model.Msg;
@@ -26,20 +22,20 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserDao userDao;
 
-    public Msg getOrderList(int userid){
+    public Msg getOrderList(int userid, String keyword, String startDate, String endDate){
         User user = userDao.getUserByUserid(userid);
-        List<Order> orderList = orderDao.findAllByUser(user);
-        if(orderList == null){
-            return new Msg("Order list is empty!", false, null);
-        }
-        else{
-            return new Msg("Get order list successfully!", true, orderList);
-        }
+        List<Order> orderList = orderDao.findFilteredOrders(user, keyword, startDate, endDate);
+        return new Msg("Get order list successfully!", true, orderList);
     }
 
     public Msg updateOrder(Order order) {
         orderDao.saveOrder(order);
         return new Msg("Update order successfully!", true, null);
+    }
+
+    public Msg getAllOrders(String keyword, String startDate, String endDate){
+        List<Order> orderList = orderDao.findFilteredOrders(null, keyword, startDate, endDate);
+        return new Msg("Get order list successfully!", true, orderList);
     }
 
 }

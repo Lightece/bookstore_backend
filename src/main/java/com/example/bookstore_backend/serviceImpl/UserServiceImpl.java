@@ -1,17 +1,27 @@
 package com.example.bookstore_backend.serviceImpl;
 
+import com.example.bookstore_backend.Dao.OrderDao;
 import com.example.bookstore_backend.Dao.UserDao;
+import com.example.bookstore_backend.entity.Order;
 import com.example.bookstore_backend.model.Msg;
 import com.example.bookstore_backend.entity.User;
 import com.example.bookstore_backend.entity.UserAuth;
+import com.example.bookstore_backend.model.UserBuy;
 import com.example.bookstore_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private OrderDao orderDao;
+
 
     public Msg Login(Integer userid, String password){
         // print current time
@@ -26,6 +36,9 @@ public class UserServiceImpl implements UserService {
         else if(!userAuth.getPassword().equals(password)){
             System.out.println("Wrong password!");
             return new Msg("Wrong password!", false, null);
+        }
+        else if(userAuth.getType()==2){ // banned
+            return new Msg("User is banned!", false, null);
         }
         else{
             User user = userDao.getUserByUserid(userid);
@@ -50,6 +63,9 @@ public class UserServiceImpl implements UserService {
         }
         else if(!userAuth.getToken().equals(token)){
             return new Msg("Wrong token!", false, null);
+        }
+        else if(userAuth.getType()<0){
+            return new Msg("User is banned!", false, null);
         }
         else{
             return new Msg("Check successfully!", true, null);
@@ -113,5 +129,42 @@ public class UserServiceImpl implements UserService {
         else{
             return new Msg("Check admin successfully!", true,null);
         }
+    }
+
+    @Override
+    public boolean checkDuplicate(int userid){
+        UserAuth userAuth = userDao.findByUserid(userid);
+        if(userAuth == null){
+            return false;
+        }
+        else return true;
+    }
+
+    //TODO
+    @Override
+    public Msg register(Integer userid, String password, String nickname, String email, String tel){
+    return new Msg("Register successfully!", true, null);
+    }
+
+    @Override
+    public Msg getUserList(int type){
+        return new Msg("Get user list successfully!", true, userDao.findAllByType(type));
+    }
+
+    @Override
+    public Msg getUsersBuy(String startDate, String endDate){
+        List<User> users = userDao.findAllByType(0);    // 0: normal user
+        users.addAll(userDao.findAllByType(2)); // 2: banned user
+        List<UserBuy> userBuyList = new ArrayList<UserBuy>();
+        for(User user: users){
+            List<Order> orders = orderDao.findFilteredOrders(user,"", startDate, endDate);
+            Double total = 0.0;
+            for(Order order: orders){
+                total += order.getTotal();
+            }
+            userBuyList.add(new UserBuy(user, total));
+        }
+        userBuyList.sort((o1, o2) -> o2.getTotal().compareTo(o1.getTotal()));
+        return new Msg("Get users buy successfully!", true, userBuyList);
     }
 }

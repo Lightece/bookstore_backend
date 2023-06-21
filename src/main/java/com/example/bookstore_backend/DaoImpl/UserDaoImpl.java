@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.websocket.OnClose;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -39,5 +41,14 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void saveUserAuth(@Param("userAuth") UserAuth userAuth){
         userAuthRepository.save(userAuth);
+    }
+    @Override
+    public List<User> findAllByType(@Param("type") Integer type){
+        List<UserAuth> userAuthList = userAuthRepository.findAllByType(type);
+        List<User> userList = new ArrayList<>();
+        for(UserAuth userAuth: userAuthList){
+            userList.add(userRepository.findByUserid(userAuth.getUserid()));
+        }
+        return userList;
     }
 }
