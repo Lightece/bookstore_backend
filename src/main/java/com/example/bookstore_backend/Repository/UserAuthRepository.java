@@ -7,8 +7,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserAuthRepository extends JpaRepository<UserAuth, Integer> {
-    UserAuth findByUserid(@Param("userid")Integer userid);
-    UserAuth findByUseridAndToken(@Param("userid") Integer userid, @Param("token")String token);
+    UserAuth findByUserauthid(@Param("userauthid")Integer userauthid);
+//    UserAuth findByUserauthidAndToken(@Param("userid") Integer userauthid, @Param("token")String token);
 
     List<UserAuth> findAllByType(@Param("type") Integer type);
 }

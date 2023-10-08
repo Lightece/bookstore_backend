@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "userauth")
@@ -15,15 +15,28 @@ import javax.persistence.*;
 @Setter
 public class UserAuth {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userid;
+    private Integer userauthid;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userid",referencedColumnName = "userid")
+    @JoinColumn(name = "userauthid", referencedColumnName = "userid")
     private User user;
 
+
     private String password;
-    private String token;
+//    private String token;
     private Integer type;
     public UserAuth() {
+    }
+
+    public UserAuth(Integer userauthid, String password, int type) {
+        this.userauthid = userauthid;
+        this.password = password;
+        this.type = type;
+//        this.token = null;
+    }
+    public UserAuth(Integer userauthid, String password, int type,String token) {
+        this.userauthid = userauthid;
+        this.password = password;
+        this.type = type;
+//        this.token = token;
     }
 }

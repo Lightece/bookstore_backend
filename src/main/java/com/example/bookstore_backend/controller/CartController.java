@@ -8,9 +8,9 @@ functions:
 - buy: buy selected books in the cart of a user, then delete them  Tested
  */
 
-
 import com.example.bookstore_backend.entity.Book;
 import com.example.bookstore_backend.entity.CartItem;
+import com.example.bookstore_backend.model.Cart2Order;
 import com.example.bookstore_backend.model.Msg;
 import com.example.bookstore_backend.serviceImpl.BookServiceImpl;
 import com.example.bookstore_backend.serviceImpl.CartServiceImpl;
@@ -18,6 +18,7 @@ import com.example.bookstore_backend.serviceImpl.UserServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,9 @@ public class CartController {
     private CartServiceImpl cartService;
     @Autowired
     private UserServiceImpl userService;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
 
     @PostMapping("getCart")
@@ -91,7 +95,6 @@ public class CartController {
     @PostMapping("buy")
     public Msg buy(@RequestBody Map<String, Object> params) {
         Integer userid = Integer.valueOf((String) params.get("userid"));
-        String token = (String) params.get("token");
         String address = (String) params.get("address");
         String phone = (String) params.get("phone");
         String receiver = (String) params.get("receiver");
@@ -99,13 +102,11 @@ public class CartController {
         ObjectMapper mapper = new ObjectMapper();
         List<CartItem> tmp = (List<CartItem>) params.get("CartItems");
         List<CartItem> itemList= mapper.convertValue(tmp, new TypeReference<List<CartItem>>() { });
-        System.out.println("TEST: buy of User:" + userid + " token:" + token + " bookList:" + itemList);
-
-        // check if the user is authorized
-        if (!userService.CheckUserStatus(userid, token).isOk()) {
-            System.out.println("Failed to buy: user not authorized");
-            return new Msg("user not authorized", false, null);
-        }
+        // TODO:重写检查用户逻辑
+//        if (!userService.CheckUserStatus(userid, token).isOk()) {
+//            System.out.println("Failed to buy: user not authorized");
+//            return new Msg("user not authorized", false, null);
+//        }
 
         // check stock
         for (CartItem item : itemList) {
@@ -114,13 +115,21 @@ public class CartController {
                 return new Msg("stock not enough", false, null);
             }
         }
-        // update stock
+        // TODO: 把这个逻辑整合到service. update stock
         for (CartItem item : itemList) {
             Book newBook = item.getBook();
             newBook.setStock(newBook.getStock() - item.getQuantity());
             bookService.updateBook(newBook);
         }
         // submit order
-        return cartService.submitOrder(userid, address, phone, receiver, itemList);
+        Cart2Order cart2Order = new Cart2Order(userid, address, phone, receiver, itemList);
+        String message = null;
+        try {
+            message = mapper.writeValueAsString(cart2Order);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        kafkaTemplate.send("order", message);
+        return new Msg("Submit order successfully!", true, null);
     }
 }

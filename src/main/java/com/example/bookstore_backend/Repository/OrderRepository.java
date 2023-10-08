@@ -14,9 +14,4 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findAllByUser(@Param("user") User user);
     Order findByOrderid(@Param("orderid") Integer orderid);
 
-
-
-
-
-
 }

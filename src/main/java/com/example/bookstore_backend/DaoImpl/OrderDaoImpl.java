@@ -9,6 +9,9 @@ import com.example.bookstore_backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -98,11 +101,13 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class , isolation = Isolation.READ_COMMITTED)
     public Order saveOrder(@Param("order") Order order){
         return orderRepository.save(order);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class , isolation = Isolation.READ_COMMITTED)
     public void saveOrderItem(@Param("orderItem") OrderItem orderItem){
         orderItemRepository.save(orderItem);
     }

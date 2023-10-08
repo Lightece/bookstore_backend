@@ -35,20 +35,20 @@ public class OrderController {
         return orderService.getOrderList(userid, "", "", "");
     }
 
-    @PostMapping("/getOrderList")
-    public Msg getOrderList(@RequestBody Map<String, Object> params){
-        System.out.println(params);
-        Integer userid = Integer.valueOf((String)params.get("userid"));
-        String token = (String)params.get("token");
-        boolean isAdmin = (boolean)params.get("isAdmin"); // admin request, auth and get order of all users
-        String keyword = (String)params.get("keyword");
-        String startDate = (String)params.get("startDate");
-        String endDate = (String)params.get("endDate");
-        if(isAdmin){
-            if(!userService.checkAdmin(userid, token).isOk()) return new Msg("User is not admin!", false, null);
-            return orderService.getAllOrders(keyword, startDate, endDate);
-        }
-        if(!userService.CheckUserStatus(userid, token).isOk()) return new Msg("User not logged in!", false, null);
-        return orderService.getOrderList(userid, keyword, startDate, endDate);
-    }
+//    @PostMapping("/getOrderList")
+//    public Msg getOrderList(@RequestBody Map<String, Object> params){
+//        System.out.println(params);
+//        Integer userid = Integer.valueOf((String)params.get("userid"));
+//        String token = (String)params.get("token");
+//        boolean isAdmin = (boolean)params.get("isAdmin"); // admin request, auth and get order of all users
+//        String keyword = (String)params.get("keyword");
+//        String startDate = (String)params.get("startDate");
+//        String endDate = (String)params.get("endDate");
+//        if(isAdmin){
+//            if(!userService.checkAdmin(userid, token).isOk()) return new Msg("User is not admin!", false, null);
+//            return orderService.getAllOrders(keyword, startDate, endDate);
+//        }
+//        if(!userService.CheckUserStatus(userid, token).isOk()) return new Msg("User not logged in!", false, null);
+//        return orderService.getOrderList(userid, keyword, startDate, endDate);
+//    }
 }

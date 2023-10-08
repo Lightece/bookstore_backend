@@ -3,7 +3,7 @@ package com.example.bookstore_backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
@@ -12,7 +12,6 @@ import java.util.List;
 @Setter
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userid;
 
 
@@ -23,7 +22,7 @@ public class User {
 
     private String email;
 
-    private String token;
+//    private String token;
 
     private String avatar;
 
@@ -38,4 +37,17 @@ public class User {
     @JsonIgnore
     @Transient
     private List<CartItem> cartItemList;
+    public User(){
+
+    }
+
+    public User(Integer userid, String nickname, String email, String tel, String avatar, String address) {
+        this.userid = userid;
+        this.nickname = nickname;
+        this.email = email;
+        this.tel = tel;
+        this.avatar = avatar;
+        this.address = address;
+//        this.token = null;
+    }
 }

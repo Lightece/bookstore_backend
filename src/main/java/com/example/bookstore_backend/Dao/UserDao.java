@@ -10,10 +10,10 @@ import java.util.List;
 @Repository
 public interface UserDao {
     UserAuth findByUserid(@Param("userid")Integer userid);
-    UserAuth findByUseridAndToken(@Param("userid") Integer userid, @Param("token")String token);
+//    UserAuth findByUseridAndToken(@Param("userid") Integer userid, @Param("token")String token);
     User getUserByUserid(@Param("userid") Integer userid);
     void saveUser(@Param("user") User user);
-    void saveUserAuth(@Param("userAuth") UserAuth userAuth);
+    UserAuth saveUserAuth(@Param("userAuth") UserAuth userAuth);
 
     List<User> findAllByType(@Param("type") Integer type);
 }

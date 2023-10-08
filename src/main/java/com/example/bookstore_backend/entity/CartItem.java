@@ -1,10 +1,11 @@
 package com.example.bookstore_backend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter
@@ -15,6 +16,7 @@ public class CartItem {
     @Id
     private int itemid;
     @ManyToOne
+//    @JsonIgnore
     @JoinColumn(name = "userid")
     private User user;
 
